@@ -33,9 +33,10 @@ def startup_event():
     global graph_app, config_error_message
     try:
         graph_app = build_app()
-    except ConfigError as e:
+    except Exception as e:
         graph_app = None
         config_error_message = str(e)
+        print(f"STARTUP CRASH ERROR: {repr(e)}")
 
 
 class GenerateRequest(BaseModel):
@@ -56,9 +57,8 @@ def generate(req: GenerateRequest):
     if graph_app is None:
         raise HTTPException(
             status_code=500,
-            detail=config_error_message or "AI engine is not configured.",
+            detail=f"CONFIG ERROR: {config_error_message}"
         )
-
     try:
         result = graph_app.invoke(initial_state(topic))
     except Exception as e:
