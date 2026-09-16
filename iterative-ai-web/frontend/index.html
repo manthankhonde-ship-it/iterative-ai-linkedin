@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IteraAI — Iterative AI Content Engine</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="page">
+
+    <!-- ===================== SIDEBAR ===================== -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">✎ <span>Itera<b>AI</b></span></div>
+      <div class="sidebar-sub">AI Content Refinement Engine</div>
+
+      <div class="status-card">
+        <div><span id="status-dot" class="status-dot"></span><span id="status-text" class="status-text">Checking engine...</span></div>
+        <div class="model-row"><span>Writer</span><span class="name">Mistral Large</span></div>
+        <div class="model-row"><span>Reviewer</span><span class="name">Groq Llama 3.3</span></div>
+        <div class="model-row"><span>Search</span><span class="name">Tavily</span></div>
+      </div>
+
+      <div class="sidebar-footer">Writer ↔ Reviewer, until it's ready.</div>
+    </aside>
+
+    <!-- ===================== MAIN CONTENT ===================== -->
+    <main class="main">
+
+      <section class="hero">
+        <h1 class="hero-title">Create. Review. Refine. Repeat.</h1>
+        <p class="hero-sub">
+          An AI-powered iterative content engine that improves your LinkedIn posts
+          through intelligent review cycles — a writer agent and a reviewer agent,
+          going back and forth until the post is publish-ready.
+        </p>
+      </section>
+
+      <section class="input-card">
+        <label class="input-label" for="topic-input">Topic</label>
+        <input
+          id="topic-input"
+          type="text"
+          maxlength="200"
+          placeholder="What do you want to write about? e.g. The future of AI in software development"
+        />
+        <div class="input-footer">
+          <span id="char-count" class="char-count">0/200 characters</span>
+          <div class="input-actions">
+            <button id="clear-btn" class="btn btn-secondary" type="button">Clear</button>
+            <button id="generate-btn" class="btn btn-primary" type="button">Generate Post</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Loading state -->
+      <section id="loading-box" class="loading-box hidden">
+        <div class="spinner"></div>
+        <span id="loading-text">Generating your post — writer and reviewer are working on it...</span>
+      </section>
+
+      <!-- Error state -->
+      <section id="error-box" class="error-box hidden"></section>
+
+      <!-- Result -->
+      <section id="result-card" class="result-card hidden">
+        <div class="result-head">
+          <span class="result-title">Final LinkedIn Post</span>
+          <span id="verdict-pill" class="verdict-pill"></span>
+        </div>
+        <div id="result-post" class="result-post"></div>
+
+        <div class="stat-row">
+          <div class="stat-item"><span id="stat-attempts" class="stat-num">0</span><span class="stat-lbl">Iterations</span></div>
+          <div class="stat-item"><span id="stat-words" class="stat-num">0</span><span class="stat-lbl">Words</span></div>
+          <div class="stat-item"><span id="stat-approved" class="stat-num">—</span><span class="stat-lbl">Approved</span></div>
+        </div>
+
+        <div class="section-label">Reviewer feedback (final)</div>
+        <div id="result-feedback" class="feedback-card"></div>
+
+        <div class="result-actions">
+          <button id="copy-btn" class="btn btn-secondary" type="button">Copy Post</button>
+          <button id="download-btn" class="btn btn-secondary" type="button">Download .txt</button>
+          <button id="new-topic-btn" class="btn btn-secondary" type="button">Start New Topic</button>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
