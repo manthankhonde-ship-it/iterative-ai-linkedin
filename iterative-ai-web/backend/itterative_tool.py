@@ -90,7 +90,7 @@ def build_app():
 
     # Writer LLM 
     writer_llm = ChatGroq(
-        model="llama-3.1-8b-instant",
+        model="llama3-8b-8192",
         api_key=groq_key,
         temperature=0.7,
     )
@@ -98,7 +98,7 @@ def build_app():
 
     # Reviewer LLM 
     reviewer_llm = ChatGroq(
-        model="llama-3.1-8b-instant",
+        model="llama3-8b-8192",
         api_key=groq_key,
         temperature=0.2,
     )
