@@ -88,17 +88,17 @@ def build_app():
 
     groq_key = os.getenv("GROQ_API_KEY")
 
-    # Writer LLM (Groq Llama 3.3 70B)
+    # Writer LLM 
     writer_llm = ChatGroq(
-        model="llama-3.3-70b-versatile",
+        model="llama-3.1-8b-instant",
         api_key=groq_key,
         temperature=0.7,
     )
     writer_llm_with_tools = writer_llm.bind_tools(tools)
 
-    # Reviewer LLM (Groq Llama 3.3 70B - fast & reliable)
+    # Reviewer LLM 
     reviewer_llm = ChatGroq(
-        model="llama-3.3-70b-versatile",
+        model="llama-3.1-8b-instant",
         api_key=groq_key,
         temperature=0.2,
     )
