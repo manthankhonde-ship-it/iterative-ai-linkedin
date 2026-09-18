@@ -14,7 +14,6 @@ from langgraph.graph.message import add_messages
 from langgraph.graph import StateGraph, START, END
 from langgraph.prebuilt import ToolNode
 from langchain_core.messages import ToolMessage
-from langchain_mistralai import ChatMistralAI
 from langchain_groq import ChatGroq
 from langchain_tavily import TavilySearch
 from dotenv import load_dotenv
@@ -68,8 +67,9 @@ class ConfigError(Exception):
 
 
 def _require_keys():
+    
     missing = [
-        k for k in ("MISTRAL_API_KEY", "GROQ_API_KEY", "TAVILY_API_KEY")
+        k for k in ("GROQ_API_KEY", "TAVILY_API_KEY")
         if not os.getenv(k)
     ]
     if missing:
@@ -86,19 +86,28 @@ def build_app():
     search_tool = TavilySearch(max_results=3)
     tools = [search_tool]
 
-    writer_llm = ChatMistralAI(model="mistral-small-latest", temperature=0.7)
+    groq_key = os.getenv("GROQ_API_KEY")
+
+    # Writer LLM (Groq Llama 3.3 70B)
+    writer_llm = ChatGroq(
+        model="llama-3.3-70b-versatile",
+        api_key=groq_key,
+        temperature=0.7,
+    )
     writer_llm_with_tools = writer_llm.bind_tools(tools)
- 
-    reviewer_llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0.2)
+
+    # Reviewer LLM (Groq Llama 3.3 70B - fast & reliable)
+    reviewer_llm = ChatGroq(
+        model="llama-3.3-70b-versatile",
+        api_key=groq_key,
+        temperature=0.2,
+    )
 
     def writer_node(state: State) -> dict:
         msgs = state["messages"]
         continuing_after_tool = bool(msgs) and isinstance(msgs[-1], ToolMessage)
 
         if continuing_after_tool:
-            # Resuming after a Tavily search — finish the draft using the
-            # search results already in the message history. This does NOT
-            # count as a new attempt.
             response = writer_llm_with_tools.invoke(
                 [("system", WRITER_SYSTEM_PROMPT)] + list(msgs)
             )
@@ -172,7 +181,7 @@ def build_app():
 
     builder.add_edge(START, "writer")
     builder.add_conditional_edges("writer", should_use_tool)
-    builder.add_edge("tools", "writer")  # loop back after search (fixed bug)
+    builder.add_edge("tools", "writer")
     builder.add_edge("extract_draft", "reviewer")
     builder.add_conditional_edges("reviewer", should_stop_looping)
 
@@ -190,9 +199,6 @@ def initial_state(topic: str) -> State:
     }
 
 
-# ==========================================
-# CLI mode — same as before, for standalone testing
-# ==========================================
 if __name__ == "__main__":
     print("=" * 55)
     print("Welcome to the LinkedIn Post Generator")
